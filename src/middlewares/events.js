@@ -9,22 +9,30 @@ const fetchEvents = async (apiUrl, eventTypeId) => {
   if (eventTypeId) {
     url += '?' + qs.stringify({ eventTypeId })
   }
-  const response = await fetch(url, {
-    headers: {
-      Accept: 'application/json'
-    }
-  })
-
-  const data = await response.json()
-  const events = get(data, ['results', 'events'])
-
-  if (!response.ok || !data.success || !events) {
-    const error = new Error(get(data, ['error', 'message']) || 'Failed to fetch events')
-    error.status = response.status
-    throw error
-  }
-
-  return events
+  return (
+    fetch(url, {
+      headers: {
+        Accept: 'application/json'
+      }
+    })
+      .then(async response => {
+        // Rethrow error via Fetch API response.ok status
+        if (!response.ok) {
+          const error = new Error(response.statusText)
+          error.status = response.status
+          throw error
+        }
+        const json = await response.json()
+        if (!json.success) {
+          throw new Error('Failed to fetch events')
+        }
+        return get(json, ['results', 'events'])
+      })
+      // Return a new promise for middleware to pass through as a promise
+      // @see https://stackoverflow.com/questions/42514144/error-handling-redux-promise-middleware
+      .then(json => Promise.resolve(json))
+      .catch(e => Promise.reject(e))
+  )
 }
 
 export default store => next => action => {
