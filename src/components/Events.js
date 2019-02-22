@@ -2,32 +2,38 @@ import React from 'react'
 import injectSheet from 'react-jss'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import { getEvents, isEventsReady } from '../selectors'
+import { getEvents, isEventsReady, getEventsError } from '../selectors'
 import Icon from './Icon'
 import titleIcon from '../icons/vivid-angle-top-left.svg'
 import theme from '../style/theme'
 import Event from './Event'
+import LoadingEventsTitle from './LoadingEventsTitle'
+import ErrorBoundary from './ErrorBoundary'
 
-const Events = ({ classes, ready, events }) => (
-  <div className={classes.container}>
-    <h3 className={classes.title}>
-      <Icon className={classes.titleIcon} symbol={titleIcon} />
-      Results
-    </h3>
-    {!ready && <p>Loading...</p>}
-    {ready && (
-      <div className={classes.tilesWrapper}>
-        <div className={classes.tiles}>
-          {events.map(event => <Event key={event.id} className={classes.tile} content={event} />)}
-        </div>
+const Events = ({ classes, ready, events, error, clearNotification, toggle }) => {
+  return (
+    <ErrorBoundary error={error}>
+      <div className={classes.container}>
+        <h3 className={classes.title}>
+          <Icon className={classes.titleIcon} symbol={titleIcon} />Results
+          <LoadingEventsTitle ready={ready} error={error} found={events.length} />
+        </h3>
+        {ready && (
+          <div className={classes.tilesWrapper}>
+            <div className={classes.tiles}>
+              {events.map(event => <Event key={event.id} className={classes.tile} content={event} />)}
+            </div>
+          </div>
+        )}
       </div>
-    )}
-  </div>
-)
+    </ErrorBoundary>
+  )
+}
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   ready: isEventsReady(state),
-  events: getEvents(state)
+  events: getEvents(state),
+  error: getEventsError(state)
 })
 
 export default compose(
@@ -35,7 +41,9 @@ export default compose(
   injectSheet({
     title: {
       paddingLeft: 20,
-      position: 'relative'
+      position: 'relative',
+      display: 'flex',
+      'flex-direction': 'row'
     },
     titleIcon: {
       position: 'absolute',

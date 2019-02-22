@@ -42,7 +42,7 @@ export default injectSheet({
     }
   },
   image: {
-    backgroundColor: '#cdcdcd'
+    backgroundColor: theme.colors.primary
   },
   icon: {
     position: 'absolute',
