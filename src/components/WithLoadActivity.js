@@ -7,7 +7,8 @@ TopBarProgress.config({
   barColors: {
     '0': theme.colors.progress,
     '1.0': theme.colors.primary
-  }
+  },
+  shadowBlur: 1
 })
 
 export function WithLoadingActvity (WrappedComponent) {

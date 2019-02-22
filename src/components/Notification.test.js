@@ -13,4 +13,11 @@ describe('Notification', () => {
     const component = shallow(<Notification debug />)
     expect(component).toMatchSnapshot()
   })
+  it('should render message, code', () => {
+    const message = 'test'
+    const code = '500'
+    const buttonLabel = 'close'
+    const component = shallow(<Notification code={code} message={message} buttonLabel={buttonLabel} />)
+    expect(component).toMatchSnapshot()
+  })
 })
