@@ -10,7 +10,7 @@ import Event from './Event'
 import LoadingEventsTitle from './LoadingEventsTitle'
 import ErrorBoundary from './ErrorBoundary'
 
-const Events = ({ classes, ready, events, error, clearNotification, toggle }) => {
+const Events = ({ classes, ready, events, error }) => {
   return (
     <ErrorBoundary error={error}>
       <div className={classes.container}>
